@@ -4,10 +4,10 @@
     "slug": "db-voltage-converter",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./icons/icon-512x512.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./icons/icon-512x512.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#f9fafb"
     },
@@ -27,7 +27,20 @@
     },
 
     "plugins": [
-      "expo-build-properties"
+      "expo-build-properties",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#f9fafb",
+          "image": "./assets/icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "dark": {
+            "backgroundColor": "#1f2937",
+            "image": "./assets/icon.png"
+          }
+        }
+      ]
     ]
   }
 }
