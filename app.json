@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "dB Voltage Converter",
+    "slug": "db-voltage-converter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./icons/icon-512x512.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./icons/icon-512x512.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f9fafb"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourname.dbvoltageconverter"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./icons/icon-512x512.png",
+        "backgroundColor": "#f9fafb"
+      },
+      "package": "com.yourname.dbvoltageconverter"
+    },
+
+    "plugins": [
+      "expo-build-properties"
+    ]
+  }
+}
