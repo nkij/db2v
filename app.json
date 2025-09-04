@@ -16,31 +16,25 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourname.dbvoltageconverter"
+      "bundleIdentifier": "com.antimatterwebcomics.dbvoltageconverter",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./icons/icon-512x512.png",
         "backgroundColor": "#f9fafb"
       },
-      "package": "com.yourname.dbvoltageconverter"
+      "package": "com.antimatterwebcomics.dbvoltageconverter"
     },
-
     "plugins": [
-      "expo-build-properties",
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#f9fafb",
-          "image": "./assets/icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "dark": {
-            "backgroundColor": "#1f2937",
-            "image": "./assets/icon.png"
-          }
-        }
-      ]
-    ]
+      "expo-build-properties"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6e098ade-1496-462e-ba19-c246f2850985"
+      }
+    }
   }
 }

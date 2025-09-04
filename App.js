@@ -1,26 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
-
-// Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync();
-
-// Set the animation options
-SplashScreen.setOptions({
-  duration: 1000,
-  fade: true,
-});
 
 export default function App() {
-  useEffect(() => {
-    // Hide the splash screen after a short delay to show the app content
-    const hideSplash = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
-      await SplashScreen.hideAsync();
-    };
-    
-    hideSplash();
-  }, []);
 
   return (
     <View style={styles.container}>
