@@ -4,10 +4,10 @@
     "slug": "db-voltage-converter",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon_with_frame.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/icon_with_frame.png",
       "resizeMode": "contain",
       "backgroundColor": "#f9fafb"
     },
@@ -23,7 +23,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./icons/icon-512x512.png",
+        "foregroundImage": "./assets/icon_with_frame.png",
         "backgroundColor": "#f9fafb"
       },
       "package": "com.antimatterwebcomics.dbvoltageconverter"

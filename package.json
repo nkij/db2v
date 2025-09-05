@@ -13,7 +13,9 @@
     "expo:web": "npx expo start --web",
     "expo:ios": "npx expo start --ios",
     "expo:android": "npx expo start --android",
-    "expo:build": "npx expo build"
+    "expo:build": "npx expo build",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "keywords": [
     "decibel",
@@ -34,6 +36,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
-    "react-native-web": "^0.20.0"
+    "react-native-web": "^0.20.0",
+    "expo": "~53.0.22"
   }
 }
