@@ -5,50 +5,65 @@ import { registerRootComponent } from 'expo';
 export default function App() {
   const [dbValue, setDbValue] = useState('');
   const [voltageValue, setVoltageValue] = useState('');
-  const [result, setResult] = useState('');
+  const [lastModified, setLastModified] = useState(null);
   const [mathExplanation, setMathExplanation] = useState('');
 
-  const convertDbToVoltage = () => {
-    if (!dbValue) {
-      Alert.alert('Error', 'Please enter a dB value');
+  const handleDbChange = (value) => {
+    setDbValue(value);
+    setLastModified('db');
+
+    if (value === '' || isNaN(Number(value))) {
+      setVoltageValue('');
+      setMathExplanation('');
       return;
     }
-    
-    const db = parseFloat(dbValue);
-    const voltageRatio = Math.pow(10, db / 20);
-    const resultText = `Voltage Ratio: ${voltageRatio.toFixed(6)}`;
-    setResult(resultText);
-    
-    const explanation = `Formula: V₂/V₁ = 10^(dB/20)\nCalculation: 10^(${db}/20) = ${voltageRatio.toFixed(6)}`;
-    setMathExplanation(explanation);
-    Keyboard.dismiss();
+
+    const db = Number(value);
+    const ratio = Math.pow(10, db / 20);
+    const voltageRatio = ratio.toFixed(6);
+    setVoltageValue(voltageRatio);
+    showMathExplanation(true, value, ratio);
   };
 
-  const convertVoltageToDb = () => {
-    if (!voltageValue) {
-      Alert.alert('Error', 'Please enter a voltage ratio');
+  const handleVoltageChange = (value) => {
+    setVoltageValue(value);
+    setLastModified('voltage');
+
+    if (value === '' || isNaN(Number(value)) || Number(value) <= 0) {
+      setDbValue('');
+      setMathExplanation('');
       return;
     }
-    
-    const voltage = parseFloat(voltageValue);
-    if (voltage <= 0) {
-      Alert.alert('Error', 'Voltage ratio must be greater than 0');
-      return;
+
+    const ratio = Number(value);
+    const db = 20 * Math.log10(ratio);
+    const dbResult = db.toFixed(6);
+    setDbValue(dbResult);
+    showMathExplanation(false, value, db);
+  };
+
+  const showMathExplanation = (fromDb, value, result) => {
+    if (fromDb) {
+      const db = Number(value);
+      const ratio = result;
+      const exponent = db / 20;
+      
+      const explanation = `Converting ${db} dB to Voltage Ratio:\n\nFormula: V₂/V₁ = 10^(dB/20)\nStep 1: Calculate exponent: ${db} ÷ 20 = ${exponent.toFixed(3)}\nStep 2: 10^${exponent.toFixed(3)} = ${ratio.toFixed(6)}\n\nResult: V₂/V₁ = ${ratio.toFixed(6)}`;
+      setMathExplanation(explanation);
+    } else {
+      const ratio = Number(value);
+      const db = result;
+      const logValue = Math.log10(ratio);
+      
+      const explanation = `Converting ${ratio} V₂/V₁ to dB:\n\nFormula: dB = 20 × log₁₀(V₂/V₁)\nStep 1: Calculate log₁₀(${ratio}) = ${logValue.toFixed(6)}\nStep 2: 20 × ${logValue.toFixed(6)} = ${db.toFixed(6)}\n\nResult: dB = ${db.toFixed(6)}`;
+      setMathExplanation(explanation);
     }
-    
-    const db = 20 * Math.log10(voltage);
-    const resultText = `dB: ${db.toFixed(2)} dB`;
-    setResult(resultText);
-    
-    const explanation = `Formula: dB = 20 × log₁₀(V₂/V₁)\nCalculation: 20 × log₁₀(${voltage}) = ${db.toFixed(2)} dB`;
-    setMathExplanation(explanation);
-    Keyboard.dismiss();
   };
 
   const clearAll = () => {
     setDbValue('');
     setVoltageValue('');
-    setResult('');
+    setLastModified(null);
     setMathExplanation('');
     Keyboard.dismiss();
   };
@@ -60,57 +75,61 @@ export default function App() {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <Text style={styles.title}>dB ⇄ Voltage Converter</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>dB ⇄ Voltage Converter</Text>
+        </View>
         
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>dB Value:</Text>
-          <TextInput
-            style={styles.input}
-            value={dbValue}
-            onChangeText={setDbValue}
-            placeholder="Enter dB value"
-            keyboardType="numeric"
-            returnKeyType="done"
-            onSubmitEditing={dismissKeyboard}
-          />
-          <TouchableOpacity style={styles.button} onPress={convertDbToVoltage}>
-            <Text style={styles.buttonText}>Convert to Voltage Ratio</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Voltage Ratio:</Text>
-          <TextInput
-            style={styles.input}
-            value={voltageValue}
-            onChangeText={setVoltageValue}
-            placeholder="Enter voltage ratio"
-            keyboardType="numeric"
-            returnKeyType="done"
-            onSubmitEditing={dismissKeyboard}
-          />
-          <TouchableOpacity style={styles.button} onPress={convertVoltageToDb}>
-            <Text style={styles.buttonText}>Convert to dB</Text>
-          </TouchableOpacity>
-        </View>
-
-        {result ? (
-          <View style={styles.resultContainer}>
-            <Text style={styles.resultTitle}>Result:</Text>
-            <Text style={styles.result}>{result}</Text>
+        {/* Main Converter Card */}
+        <View style={styles.card}>
+          {/* Decibels Input */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Decibels (dB)</Text>
+            <TextInput
+              style={styles.input}
+              value={dbValue}
+              onChangeText={handleDbChange}
+              placeholder="Enter dB value..."
+              keyboardType="numeric"
+              returnKeyType="done"
+              onSubmitEditing={dismissKeyboard}
+            />
           </View>
-        ) : null}
 
+          {/* Conversion Indicator */}
+          <View style={styles.conversionIndicator}>
+            <Text style={styles.arrowIcon}>⇅</Text>
+          </View>
+
+          {/* Voltage Ratio Input */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Voltage Ratio (V₂/V₁)</Text>
+            <TextInput
+              style={styles.input}
+              value={voltageValue}
+              onChangeText={handleVoltageChange}
+              placeholder="Enter voltage ratio..."
+              keyboardType="numeric"
+              returnKeyType="done"
+              onSubmitEditing={dismissKeyboard}
+            />
+          </View>
+
+          {/* Clear Button */}
+          {(dbValue || voltageValue) ? (
+            <TouchableOpacity style={styles.clearButton} onPress={clearAll}>
+              <Text style={styles.clearButtonText}>Clear All</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+
+        {/* Math Explanation Box */}
         {mathExplanation ? (
           <View style={styles.explanationContainer}>
-            <Text style={styles.explanationTitle}>Math Explanation:</Text>
+            <Text style={styles.explanationTitle}>📊 Calculation Steps</Text>
             <Text style={styles.explanation}>{mathExplanation}</Text>
           </View>
         ) : null}
-
-        <TouchableOpacity style={styles.clearButton} onPress={clearAll}>
-          <Text style={styles.clearButtonText}>Clear All</Text>
-        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -120,81 +139,81 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9fafb',
-    padding: 20,
+    padding: 16,
     paddingTop: 60,
   },
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#3b82f6',
     textAlign: 'center',
-    marginBottom: 30,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    padding: 24,
+    marginBottom: 24,
   },
   inputGroup: {
-    marginBottom: 20,
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 24,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#374151',
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
     padding: 12,
-    fontSize: 16,
-    backgroundColor: 'white',
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: '#3b82f6',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  resultContainer: {
-    backgroundColor: '#dbeafe',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  resultTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1e40af',
-    marginBottom: 5,
-  },
-  result: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1e40af',
+    backgroundColor: '#f9fafb',
+    fontFamily: 'monospace',
+  },
+  conversionIndicator: {
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  arrowIcon: {
+    fontSize: 24,
+    color: '#6b7280',
+    backgroundColor: '#f3f4f6',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    textAlign: 'center',
+    lineHeight: 48,
   },
   explanationContainer: {
-    backgroundColor: '#f3f4f6',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    padding: 24,
   },
   explanationTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
+    color: '#1f2937',
+    marginBottom: 16,
   },
   explanation: {
     fontSize: 14,
@@ -202,15 +221,16 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   clearButton: {
-    backgroundColor: '#ef4444',
+    backgroundColor: '#f3f4f6',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
+    marginTop: 8,
   },
   clearButtonText: {
-    color: 'white',
+    color: '#374151',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });
 
