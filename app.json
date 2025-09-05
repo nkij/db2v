@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "dB Voltage Converter",
+    "name": "dBVoltageConverter",
     "slug": "db-voltage-converter",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,9 +28,7 @@
       },
       "package": "com.antimatterwebcomics.dbvoltageconverter"
     },
-    "plugins": [
-      "expo-build-properties"
-    ],
+    "plugins": [],
     "extra": {
       "eas": {
         "projectId": "6e098ade-1496-462e-ba19-c246f2850985"
